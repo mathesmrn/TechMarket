@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho | TechMarket</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .cart-icon { position: relative; }
+        .cart-badge {
+            position: absolute; top: -8px; right: -10px;
+            background: #ef4444; color: white; font-size: 0.68rem;
+            font-weight: 700; width: 18px; height: 18px; border-radius: 50%;
+            display: none; align-items: center; justify-content: center;
+        }
+        .cart-wrapper { padding: 40px 0 80px; min-height: calc(100vh - 80px); }
+        .cart-header { margin-bottom: 30px; }
+        .cart-header h1 { font-size: 1.9rem; color: var(--black); display: flex; align-items: center; gap: 12px; }
+        .cart-header h1 i { color: var(--primary-green); }
+        .cart-header p { margin-top: 6px; color: var(--medium-gray); font-size: 0.9rem; }
+
+        .cart-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; background: white; border-radius: 16px; padding: 80px 40px; box-shadow: var(--shadow); text-align: center; }
+        .cart-empty-icon { width: 110px; height: 110px; background: var(--light-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--primary-green); margin-bottom: 28px; }
+        .cart-empty h2 { font-size: 1.5rem; color: var(--black); margin-bottom: 10px; }
+        .cart-empty p { color: var(--medium-gray); font-size: 0.95rem; max-width: 400px; margin-bottom: 30px; line-height: 1.6; }
+        .cart-empty-actions { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+
+        .cart-layout { display: grid; grid-template-columns: 1fr 360px; gap: 25px; align-items: start; }
+        .cart-items-section { display: flex; flex-direction: column; gap: 15px; }
+        .cart-item { background: white; border-radius: 14px; padding: 20px; box-shadow: var(--shadow); display: flex; gap: 18px; align-items: flex-start; transition: var(--transition); border: 1px solid transparent; }
+        .cart-item:hover { border-color: var(--primary-green); box-shadow: var(--shadow-lg); }
+        .cart-item-img { width: 100px; height: 100px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background: var(--light-gray); }
+        .cart-item-img img { width: 100%; height: 100%; object-fit: cover; }
+        .cart-item-info { flex: 1; }
+        .cart-item-badge { display: inline-block; font-size: 0.72rem; font-weight: 600; background: var(--primary-green); color: white; padding: 2px 9px; border-radius: 4px; margin-bottom: 8px; }
+        .cart-item-name { font-size: 1rem; font-weight: 600; color: var(--black); margin-bottom: 5px; }
+        .cart-item-seller { font-size: 0.82rem; color: var(--medium-gray); margin-bottom: 12px; }
+        .cart-item-controls { display: flex; align-items: center; gap: 12px; }
+        .qty-control { display: flex; align-items: center; border: 1.5px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+        .qty-btn { width: 32px; height: 32px; border: none; background: var(--light-gray); cursor: pointer; font-size: 1rem; color: var(--dark-gray); transition: var(--transition); font-family: 'Inter', sans-serif; }
+        .qty-btn:hover { background: var(--light-green); color: var(--dark-green); }
+        .qty-value { width: 36px; text-align: center; font-size: 0.9rem; font-weight: 600; }
+        .btn-remove { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 0.82rem; font-family: 'Inter', sans-serif; padding: 4px 8px; border-radius: 6px; transition: var(--transition); }
+        .btn-remove:hover { background: #fef2f2; }
+        .cart-item-price { text-align: right; flex-shrink: 0; }
+        .cart-item-price .price-main { font-size: 1.3rem; font-weight: 700; color: var(--black); }
+        .cart-item-price .price-unit { font-size: 0.78rem; color: var(--medium-gray); margin-top: 3px; }
+
+        .cart-summary { background: white; border-radius: 14px; padding: 25px; box-shadow: var(--shadow); position: sticky; top: 100px; }
+        .summary-header { border-bottom: 1px solid var(--light-gray); padding-bottom: 15px; margin-bottom: 20px; }
+        .summary-header h3 { font-size: 1.05rem; font-weight: 700; color: var(--black); display: flex; align-items: center; gap: 8px; }
+        .summary-header h3 i { color: var(--primary-green); }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem; }
+        .summary-row .label { color: var(--medium-gray); }
+        .summary-row .value { font-weight: 500; }
+        .summary-row .value.green { color: var(--primary-green); font-weight: 600; }
+        .summary-total { display: flex; justify-content: space-between; margin: 20px 0; padding-top: 15px; border-top: 2px solid var(--light-gray); font-size: 1.05rem; }
+        .summary-total .label { font-weight: 700; }
+        .summary-total .value { font-weight: 800; color: var(--black); font-size: 1.4rem; }
+        .btn-checkout { width: 100%; padding: 16px; background: var(--primary-green); color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: var(--transition); font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(34,197,94,0.35); text-decoration: none; }
+        .btn-checkout:hover { background: var(--dark-green); transform: translateY(-1px); }
+        .eco-saving { display: flex; gap: 10px; align-items: flex-start; margin-top: 18px; background: var(--light-green); padding: 14px; border-radius: 10px; font-size: 0.82rem; color: var(--dark-green); }
+        .eco-saving i { color: var(--primary-green); flex-shrink: 0; margin-top: 1px; }
+
+        .suggestions { margin-top: 50px; }
+        @media (max-width: 768px) {
+            .cart-layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="index.html" style="display:flex;align-items:center;gap:10px;">
+                    <i class="fas fa-recycle"></i><span>TechMarket</span>
+                </a>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar produtos...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            <nav class="nav-menu">
+                <a href="entrar.html">Entrar</a>
+                <a href="cadastro.html">Criar conta</a>
+                <a href="anunciar.html" class="btn-advertise">Anunciar produto</a>
+                <a href="carrinho.html" class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-badge">0</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container cart-wrapper">
+        <div class="cart-header">
+            <h1><i class="fas fa-shopping-cart"></i> Meu Carrinho</h1>
+            <p id="cartCountLabel"></p>
+        </div>
+
+        <div class="cart-empty" id="cartEmpty">
+            <div class="cart-empty-icon"><i class="fas fa-shopping-cart"></i></div>
+            <h2>Seu carrinho está vazio</h2>
+            <p>Explore os produtos sustentáveis da TechMarket e encontre oportunidades únicas de tecnologia circular.</p>
+            <div class="cart-empty-actions">
+                <a href="index.html" class="btn-primary">Ver produtos</a>
+                <a href="anunciar.html" class="btn-secondary">Anunciar produto</a>
+            </div>
+        </div>
+
+        <div class="cart-layout" id="cartFilled" style="display:none;">
+            <div class="cart-items-section" id="cartItemsList"></div>
+            <div class="cart-summary">
+                <div class="summary-header">
+                    <h3><i class="fas fa-receipt"></i> Resumo do pedido</h3>
+                </div>
+                <div class="summary-body">
+                    <div class="summary-row">
+                        <span class="label" id="itemCountLabel">Subtotal</span>
+                        <span class="value" id="subtotal">R$ 0,00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="label">Frete ecológico</span>
+                        <span class="value green">Grátis</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="label">Desconto eco (5%)</span>
+                        <span class="value green" id="discountEl">− R$ 0,00</span>
+                    </div>
+                    <div class="summary-total">
+                        <span class="label">Total</span>
+                        <span class="value" id="total">R$ 0,00</span>
+                    </div>
+                    <a href="finalizar.html" class="btn-checkout">
+                        <i class="fas fa-lock"></i> Finalizar compra
+                    </a>
+                    <div class="eco-saving">
+                        <i class="fas fa-leaf"></i>
+                        <p>Com esta compra você contribui para a redução de resíduos eletrônicos. Obrigado!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="suggestions">
+            <h2 class="section-title">Você também pode gostar</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <div class="product-image"><img src="imagens/bateria.webp" alt="Bateria"><span class="badge-eco">Selo Verde</span></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Bateria de Lítio para Projetos</h3>
+                        <p class="product-price">R$ 35,00</p>
+                        <p class="product-status">Recondicionada</p>
+                        <p class="product-location">Recife, PE</p>
+                        <div class="product-actions">
+                            <button class="btn-buy" onclick="addToCart('prod8','Bateria de Lítio para Projetos',35,'imagens/bateria.webp')">Comprar</button>
+                            <a href="produto8.html" class="btn-details">Ver detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image"><img src="imagens/play2.jpg" alt="PS2"><span class="badge-eco">Eco Produto</span></div>
+                    <div class="product-info">
+                        <h3 class="product-name">PlayStation 2 - Não Liga</h3>
+                        <p class="product-price">R$ 100,00</p>
+                        <p class="product-status">Sucata</p>
+                        <p class="product-location">Brasília, DF</p>
+                        <div class="product-actions">
+                            <button class="btn-buy" onclick="addToCart('prod7','PlayStation 2 - Não Liga',100,'imagens/play2.jpg')">Comprar</button>
+                            <a href="produto7.html" class="btn-details">Ver detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <div class="product-image"><img src="imagens/capacitores.jpg" alt="Componentes"><span class="badge-eco">Eco Produto</span></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Kit de Capacitores e Resistores</h3>
+                        <p class="product-price">R$ 45,00</p>
+                        <p class="product-status">Novo (Estoque Antigo)</p>
+                        <p class="product-location">Belo Horizonte, MG</p>
+                        <div class="product-actions">
+                            <button class="btn-buy" onclick="addToCart('prod4','Kit de Capacitores e Resistores',45,'imagens/capacitores.jpg')">Comprar</button>
+                            <a href="produto4.html" class="btn-details">Ver detalhes</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <div class="logo"><i class="fas fa-recycle"></i><span>TechMarket</span></div>
+                <p>Tecnologia sustentável para o futuro.</p>
+                <div class="social-links"><a href="#"><i class="fab fa-facebook"></i></a><a href="#"><i class="fab fa-instagram"></i></a></div>
+            </div>
+            <div class="footer-links"><h4>Links Úteis</h4><ul><li><a href="index.html">Página Inicial</a></li><li><a href="#">Como Comprar</a></li></ul></div>
+        </div>
+        <div class="footer-bottom container"><p>&copy; 2026 TechMarket. Todos os direitos reservados.</p></div>
+    </footer>
+
+    <div class="bottom">
+        <div class="bottom-item"><i class="fa-solid fa-house"></i><a href="index.html">Início</a></div>
+        <div class="bottom-item"><i class="fa-solid fa-cart-shopping"></i><a href="carrinho.html">Carrinho</a></div>
+        <div class="bottom-item"><i class="fa-solid fa-table-cells-large"></i><a href="conversas.html">Conversas</a></div>
+        <div class="bottom-item"><i class="fa-solid fa-bars"></i><a href="mais.html">Mais</a></div>
+    </div>
+
+</body>
+</html>

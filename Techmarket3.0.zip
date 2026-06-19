@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bateria de Lítio para Projetos | TechMarket</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo"><a href="index.html"><i class="fas fa-recycle"></i> TechMarket</a></div>
+            <nav class="nav-menu"><a href="index.html">Início</a></nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="breadcrumb"><a href="index.html">Início</a> > <a href="#">Baterias</a></div>
+        <div class="product-detail-container">
+            <div class="product-gallery">
+                <img src="imagens/bateria.webp" alt="Bateria">
+            </div>
+            <div class="product-purchase-card">
+                <span class="badge-eco">Selo Verde</span>
+                <h1>Bateria de Lítio para Projetos</h1>
+                <p class="product-status">Recondicionada - Testada</p>
+                <div class="price">R$ 35,00</div>
+                <div class="seller-info">
+                    <h4>Vendedor</h4>
+                    <p>Tech Recicla Recife</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Recife, PE</p>
+                </div>
+                <div class="purchase-actions">
+                    <a href="#" class="btn-buy-now">Comprar agora</a>
+                     <a href="#" class="btn-add-cart">Adicionar ao carrinho</a>
+                </div>
+        </div>
+        <div class="product-description-section">
+            <h2>Descrição</h2>
+            <p>Bateria 18650 recondicionada, testada com carga estável. Ideal para projetos de robótica, lanternas ou Power Banks caseiros.</p>
+        </div><br>
+        <section class="questions-section">
+            <h2>Perguntas e Respostas</h2>
+            <div class="ask-container">
+                <input type="text" placeholder="Escreva sua pergunta...">
+                <button class="btn-ask">Perguntar</button>
+            </div>
+            <div class="last-questions">
+                <div class="question-item">
+                    <span class="question-text">Qual a amperagem?</span>
+                    <span class="answer-text">Cerca de 2200mAh conforme teste de descarga.</span>
+                </div>
+            </div>
+        </section>
+    </main>
+    <a href="#" class="btn-chat-float" title="Conversar com o vendedor"><i class="fas fa-comments"></i></a>
+    <footer class="footer"><div class="container footer-bottom"><p>&copy; 2026 TechMarket</p></div></footer>
+</body>
+</html>

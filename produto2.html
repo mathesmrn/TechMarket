@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mais | TechMarket</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .mais-wrapper {
+            padding: 0 0 80px;
+        }
+ 
+        .profile-banner {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+            padding: 40px 0 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-banner::before {
+            content: '';
+            position: absolute;
+            top: -60px; right: -60px;
+            width: 250px; height: 250px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+        }
+
+        .profile-banner::after {
+            content: '';
+            position: absolute;
+            bottom: -40px; left: 60px;
+            width: 180px; height: 180px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.04);
+        }
+
+        .profile-inner {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 22px;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+            flex-shrink: 0;
+            border: 2px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .profile-avatar:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .profile-info { flex: 1; }
+
+        .profile-info h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .profile-info p {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.8);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 25px;
+            margin-top: 15px;
+        }
+
+        .p-stat {
+            text-align: center;
+        }
+
+        .p-stat strong {
+            display: block;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        .p-stat span {
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.75);
+        }
+
+        .btn-edit-profile {
+            background: rgba(255,255,255,0.18);
+            border: 1.5px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            padding: 10px 20px;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            flex-shrink: 0;
+        }
+
+        .btn-edit-profile:hover {
+            background: rgba(255,255,255,0.28);
+        }
+        
+        .mais-content {
+            padding: 30px 0;
+        }
+
+        .mais-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .mais-section {
+            background: white;
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .mais-section-title {
+            padding: 16px 22px 12px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--medium-gray);
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .mais-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 22px;
+            border-bottom: 1px solid var(--light-gray);
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .mais-item:last-child { border-bottom: none; }
+
+        .mais-item:hover {
+            background: var(--light-green);
+        }
+
+        .mais-item:hover .item-icon {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .mais-item:hover .item-arrow {
+            color: var(--primary-green);
+            transform: translateX(4px);
+        }
+
+        .item-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--dark-gray);
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .item-icon.green { background: var(--light-green); color: var(--primary-green); }
+        .item-icon.blue  { background: #dbeafe; color: #2563eb; }
+        .item-icon.amber { background: #fef3c7; color: #d97706; }
+        .item-icon.red   { background: #fef2f2; color: #ef4444; }
+        .item-icon.purple{ background: #f3e8ff; color: #9333ea; }
+
+        .item-body { flex: 1; }
+
+        .item-body strong {
+            display: block;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 2px;
+        }
+
+        .item-body span {
+            font-size: 0.78rem;
+            color: var(--medium-gray);
+        }
+
+        .item-arrow {
+            color: #d1d5db;
+            font-size: 0.8rem;
+            transition: var(--transition);
+        }
+
+        .item-badge {
+            background: var(--primary-green);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 10px;
+        }
+
+        .item-badge.red { background: #ef4444; }
+
+        .eco-impact-card {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 1.5px solid #bbf7d0;
+            border-radius: 14px;
+            padding: 25px 28px;
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
+
+        .eco-impact-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--primary-green);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7rem;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 6px 16px rgba(34,197,94,0.25);
+        }
+
+        .eco-impact-info { flex: 1; }
+
+        .eco-impact-info h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--dark-green);
+            margin-bottom: 6px;
+        }
+
+        .eco-impact-info p {
+            font-size: 0.85rem;
+            color: var(--dark-green);
+            opacity: 0.8;
+        }
+
+        .eco-impact-stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .eco-stat {
+            text-align: center;
+        }
+
+        .eco-stat strong {
+            display: block;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--dark-green);
+        }
+
+        .eco-stat span {
+            font-size: 0.72rem;
+            color: var(--primary-green);
+        }
+        
+        .btn-logout {
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border: 1.5px solid #fecaca;
+            border-radius: 12px;
+            color: #ef4444;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-logout:hover {
+            background: #fef2f2;
+        }
+
+        .footer-links-row {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            font-size: 0.8rem;
+            color: var(--medium-gray);
+            justify-content: center;
+        }
+
+        .footer-links-row a {
+            color: var(--medium-gray);
+            transition: var(--transition);
+        }
+
+        .footer-links-row a:hover { color: var(--primary-green); }
+
+        @media (max-width: 700px) {
+            .mais-grid { grid-template-columns: 1fr; }
+            .eco-impact-card { flex-direction: column; text-align: center; }
+            .profile-inner { flex-direction: column; text-align: center; }
+            .profile-stats { justify-content: center; }
+            .btn-edit-profile { align-self: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="index.html" style="display:flex;align-items:center;gap:10px;">
+                    <i class="fas fa-recycle"></i>
+                    <span>TechMarket</span>
+                </a>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar produtos, marcas e muito mais...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            <nav class="nav-menu">
+                <a href="entrar.html">Entrar</a>
+                <a href="cadastro.html">Criar conta</a>
+                <a href="anunciar.html" class="btn-advertise">Anunciar produto</a>
+                <a href="carrinho.html" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="mais-wrapper">
+        
+        <div class="profile-banner">
+            <div class="container">
+                <div class="profile-inner">
+                    <div class="profile-avatar">Us</div>
+                    <div class="profile-info">
+                        <h2>Usuário</h2>
+                        <p><i class="fas fa-circle-check" style="font-size:0.9rem;"></i> Conta verificada</p>
+                        <div class="profile-stats">
+                            <div class="p-stat">
+                                <strong>12</strong>
+                                <span>Compras</span>
+                            </div>
+                            <div class="p-stat">
+                                <strong>3</strong>
+                                <span>Vendas</span>
+                            </div>
+                            <div class="p-stat">
+                                <strong>4.8★</strong>
+                                <span>Avaliação</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-edit-profile">
+                        <i class="fas fa-pen"></i> Editar perfil
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <main class="mais-content container">
+           
+            <div class="eco-impact-card">
+                <div class="eco-impact-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div class="eco-impact-info">
+                    <h3>Seu Impacto Ecológico</h3>
+                    <p>Juntos estamos transformando lixo eletrônico em oportunidade sustentável.</p>
+                </div>
+                <div class="eco-impact-stats">
+                    <div class="eco-stat">
+                        <strong>4,2 kg</strong>
+                        <span>e-lixo evitado</span>
+                    </div>
+                    <div class="eco-stat">
+                        <strong>15</strong>
+                        <span>itens reciclados</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mais-grid" style="margin-top:25px;">
+
+                <div class="mais-section">
+                    <div class="mais-section-title">Minha atividade</div>
+
+                    <a href="#" class="mais-item">
+                        <div class="item-icon blue">
+                            <i class="fas fa-bag-shopping"></i>
+                        </div>
+                        <div class="item-body">
+                            <strong>Minhas compras</strong>
+                            <span>Acompanhe seus pedidos</span>
+                        </div>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+
+                    <a href="#" class="mais-item">
+                        <div class="item-icon amber">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="item-body">
+                            <strong>Favoritos</strong>
+                            <span>Produtos que você curtiu</span>
+                        </div>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+
+                    <a href="#" class="mais-item">
+                        <div class="item-icon">
+                            <i class="fas fa-message"></i>
+                        </div>
+                        <div class="item-body">
+                            <strong>Minhas perguntas</strong>
+                            <span>Perguntas feitas a vendedores</span>
+                        </div>
+                        <span class="item-badge">3</span>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+
+                    <a href="#" class="mais-item">
+                        <div class="item-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="item-body">
+                            <strong>Histórico</strong>
+                            <span>Produtos visualizados</span>
+                        </div>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+
+                    <a href="#" class="mais-item">
+                        <div class="item-icon">
+                            <i class="fas fa-rectangle-list"></i>
+                        </div>
+                        <div class="item-body">
+                            <strong>Minhas opiniões</strong>
+                            <span>Avaliações que você deixou</span>
+                        </div>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+                </div>
+
+                <div class="mais-section">
+                    <div class="mais-section-title">Vender e gerenciar</div>
+
+                    <a href="anunciar.html" class="mais-item">
+                        <div class="item-icon green">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <div class="item-body">
+                            <strong>Anunciar produto</strong>
+                            <span>Venda seus eletrônicos</span>
+                        </div>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+
+                    <a href="#" class="mais-item">
+                        <div class="item-icon green">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="item-body">
+                            <strong>Central de vendedores</strong>
+                            <span>Gerencie seus anúncios</span>
+                        </div>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+
+                    <a href="#" class="mais-item">
+                        <div class="item-icon blue">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="item-body">
+                            <strong>Faturamento</strong>
+                            <span>Relatórios e receitas</span>
+                        </div>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+
+                    <a href="ecopontos.html" class="mais-item">
+                        <div class="item-icon green">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <div class="item-body">
+                            <strong>Ecopontos próximos</strong>
+                            <span>Descarte correto de eletrônicos</span>
+                        </div>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+
+                    <a href="#" class="mais-item">
+                        <div class="item-icon amber">
+                            <i class="fas fa-tag"></i>
+                        </div>
+                        <div class="item-body">
+                            <strong>Promoções ativas</strong>
+                            <span>Cupons e descontos</span>
+                        </div>
+                        <span class="item-badge">2</span>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+                </div>
+                
+                <div class="mais-section">
+                    <div class="mais-section-title">Minha conta</div>
+
+                    <a href="#" class="mais-item">
+                        <div class="item-icon">
+                            <i class="fas fa-gear"></i>
+                        </div>
+                        <div class="item-body">
+                            <strong>Configurações</strong>
+                            <span>Notificações, privacidade</span>
+                        </div>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+
+                    <a href="#" class="mais-item">
+                        <div class="item-icon blue">
+                            <i class="fas fa-shield-halved"></i>
+                        </div>
+                        <div class="item-body">
+                            <strong>Segurança</strong>
+                            <span>Senha e verificação</span>
+                        </div>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+
+                    <a href="#" class="mais-item">
+                        <div class="item-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="item-body">
+                            <strong>Pagamentos</strong>
+                            <span>Cartões e saldo</span>
+                        </div>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+
+                    <a href="#" class="mais-item">
+                        <div class="item-icon">
+                            <i class="fas fa-map-pin"></i>
+                        </div>
+                        <div class="item-body">
+                            <strong>Endereços</strong>
+                            <span>Locais de entrega salvos</span>
+                        </div>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+                </div>
+
+                <div class="mais-section">
+                    <div class="mais-section-title">Suporte e informações</div>
+
+                    <a href="#" class="mais-item">
+                        <div class="item-icon blue">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <div class="item-body">
+                            <strong>Central de ajuda</strong>
+                            <span>Tire suas dúvidas</span>
+                        </div>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+
+                    <a href="#" class="mais-item">
+                        <div class="item-icon">
+                            <i class="fas fa-file-lines"></i>
+                        </div>
+                        <div class="item-body">
+                            <strong>Termos e condições</strong>
+                            <span>Políticas da plataforma</span>
+                        </div>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+
+                    <a href="#" class="mais-item">
+                        <div class="item-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div class="item-body">
+                            <strong>Privacidade</strong>
+                            <span>Como cuidamos dos seus dados</span>
+                        </div>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+
+                    <a href="#" class="mais-item">
+                        <div class="item-icon green">
+                            <i class="fas fa-recycle"></i>
+                        </div>
+                        <div class="item-body">
+                            <strong>Sobre a TechMarket</strong>
+                            <span>Nossa missão sustentável</span>
+                        </div>
+                        <i class="fas fa-chevron-right item-arrow"></i>
+                    </a>
+                </div>
+
+            </div>
+
+            <button class="btn-logout">
+                <i class="fas fa-right-from-bracket"></i> Sair da conta
+            </button>
+
+            <div class="footer-links-row">
+                <a href="#">Termos de Uso</a>
+                <span>·</span>
+                <a href="#">Política de Privacidade</a>
+                <span>·</span>
+                <span>TechMarket v2.1.0</span>
+            </div>
+
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <div class="logo">
+                    <i class="fas fa-recycle"></i>
+                    <span>TechMarket</span>
+                </div>
+                <p>Tecnologia sustentável para o futuro. O maior marketplace de lixo eletrônico do Brasil.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Links Úteis</h4>
+                <ul>
+                    <li><a href="index.html">Página Inicial</a></li>
+                    <li><a href="#">Como Vender</a></li>
+                    <li><a href="#">Como Comprar</a></li>
+                    <li><a href="#">Blog EcoTech</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Categorias</h4>
+                <ul>
+                    <li><a href="#">Peças</a></li>
+                    <li><a href="#">Computadores</a></li>
+                    <li><a href="#">Celulares</a></li>
+                    <li><a href="#">Sucata</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Contato</h4>
+                <ul>
+                    <li><i class="fas fa-envelope"></i> contato@techmarket.com</li>
+                    <li><i class="fas fa-phone"></i> (11) 9999-9999</li>
+                    <li><i class="fas fa-map-marker-alt"></i> São Paulo, Brasil</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom container">
+            <p>&copy; 2026 TechMarket. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <div class="bottom">
+        <div class="bottom-item"><i class="fa-solid fa-house"></i><a href="index.html">Início</a></div>
+        <div class="bottom-item"><i class="fa-solid fa-cart-shopping"></i><a href="carrinho.html">Carrinho</a></div>
+        <div class="bottom-item"><i class="fa-solid fa-table-cells-large"></i><a href="conversas.html">Conversas</a></div>
+        <div class="bottom-item"><i class="fa-solid fa-bars"></i><a href="mais.html">Mais</a></div>
+    </div>
+
+</body>
+</html>

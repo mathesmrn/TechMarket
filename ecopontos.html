@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversas | TechMarket</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .chat-wrapper {
+            padding: 40px 0 80px;
+        }
+
+        .chat-page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .chat-page-header h1 {
+            font-size: 1.9rem;
+            color: var(--black);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-page-header h1 i {
+            color: var(--primary-green);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            border: 1.5px solid #e5e7eb;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--dark-gray);
+            transition: var(--transition);
+        }
+
+        .btn-icon:hover {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+            background: var(--light-green);
+        }
+
+        .chat-search {
+            background: white;
+            border-radius: 10px;
+            border: 1.5px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            margin-bottom: 18px;
+            transition: var(--transition);
+        }
+
+        .chat-search:focus-within {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(34,197,94,0.1);
+        }
+
+        .chat-search i { color: var(--medium-gray); }
+
+        .chat-search input {
+            border: none;
+            outline: none;
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+            width: 100%;
+            color: var(--dark-gray);
+        }
+
+        .chat-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: 1.5px solid #e5e7eb;
+            background: white;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Inter', sans-serif;
+            color: var(--dark-gray);
+        }
+
+        .filter-chip:hover,
+        .filter-chip.active {
+            background: var(--primary-green);
+            border-color: var(--primary-green);
+            color: white;
+        }
+
+        .chat-layout {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .conv-list-card {
+            background: white;
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .conv-list-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .conv-list-header h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--dark-gray);
+        }
+
+        .unread-badge {
+            background: var(--primary-green);
+            color: white;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .conv-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--light-gray);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .conv-item:last-child { border-bottom: none; }
+        .conv-item:hover,
+        .conv-item.active {
+            background: var(--light-green);
+        }
+
+        .conv-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+            background: var(--primary-green);
+            border-radius: 0 2px 2px 0;
+        }
+
+        .conv-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            overflow: hidden;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .conv-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .conv-avatar .online-dot {
+            position: absolute;
+            bottom: 2px; right: 2px;
+            width: 11px; height: 11px;
+            background: var(--primary-green);
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .conv-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .conv-name-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .conv-name {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--black);
+        }
+
+        .conv-time {
+            font-size: 0.75rem;
+            color: var(--medium-gray);
+        }
+
+        .conv-preview {
+            font-size: 0.82rem;
+            color: var(--medium-gray);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conv-unread-count {
+            background: var(--primary-green);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-left: 4px;
+        }
+
+        .chat-panel {
+            background: white;
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 580px;
+        }
+
+        .chat-panel-header {
+            padding: 16px 22px;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .chat-panel-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .chat-panel-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .chat-panel-info { flex: 1; }
+
+        .chat-panel-info h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--black);
+            margin-bottom: 2px;
+        }
+
+        .chat-online {
+            font-size: 0.78rem;
+            color: var(--primary-green);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .chat-online::before {
+            content: '';
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--primary-green);
+        }
+
+        .chat-product-ref {
+            background: var(--light-green);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.78rem;
+            color: var(--dark-green);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-product-ref i { flex-shrink: 0; }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: #f9fafb;
+        }
+
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
+
+        .msg-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .msg-row.own { flex-direction: row-reverse; }
+
+        .msg-avatar-mini {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .msg-avatar-mini img { width: 100%; height: 100%; object-fit: cover; }
+
+        .msg-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+
+        .msg-bubble.other {
+            background: white;
+            color: var(--dark-gray);
+            border: 1px solid #e5e7eb;
+            border-bottom-left-radius: 4px;
+        }
+
+        .msg-bubble.own {
+            background: var(--primary-green);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .msg-time {
+            font-size: 0.7rem;
+            color: var(--medium-gray);
+            margin-top: 4px;
+            padding: 0 4px;
+        }
+
+        .msg-row.own .msg-time { text-align: right; }
+
+        .date-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.75rem;
+            color: var(--medium-gray);
+            font-weight: 600;
+        }
+
+        .date-divider::before, .date-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        .chat-input-bar {
+            padding: 16px 20px;
+            border-top: 1px solid var(--light-gray);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input-field {
+            flex: 1;
+            background: var(--light-gray);
+            border: 1.5px solid transparent;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: var(--transition);
+            resize: none;
+        }
+
+        .chat-input-field:focus {
+            border-color: var(--primary-green);
+            background: white;
+        }
+
+        .btn-send {
+            width: 44px;
+            height: 44px;
+            background: var(--primary-green);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .btn-send:hover { background: var(--dark-green); }
+
+        .chat-empty-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--medium-gray);
+            text-align: center;
+            padding: 40px;
+        }
+
+        .chat-empty-panel i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            color: #d1d5db;
+        }
+
+        .chat-empty-panel p {
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 900px) {
+            .chat-layout { grid-template-columns: 1fr; }
+            .chat-panel { height: 450px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="index.html" style="display:flex;align-items:center;gap:10px;">
+                    <i class="fas fa-recycle"></i>
+                    <span>TechMarket</span>
+                </a>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar produtos, marcas e muito mais...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            <nav class="nav-menu">
+                <a href="entrar.html">Entrar</a>
+                <a href="cadastro.html">Criar conta</a>
+                <a href="anunciar.html" class="btn-advertise">Anunciar produto</a>
+                <a href="carrinho.html" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="chat-wrapper container">
+
+        <div class="chat-page-header">
+            <h1><i class="fas fa-comments"></i> Conversas</h1>
+            <div class="header-actions">
+                <button class="btn-icon" title="Buscar"><i class="fas fa-magnifying-glass"></i></button>
+                <button class="btn-icon" title="Nova conversa"><i class="fas fa-pen-to-square"></i></button>
+            </div>
+        </div>
+
+        <div class="chat-search">
+            <i class="fas fa-magnifying-glass"></i>
+            <input type="text" placeholder="Buscar conversas...">
+        </div>
+
+        <div class="chat-filters">
+            <button class="filter-chip active" onclick="setFilter(this)">Todas</button>
+            <button class="filter-chip" onclick="setFilter(this)">Comprando</button>
+            <button class="filter-chip" onclick="setFilter(this)">Vendendo</button>
+            <button class="filter-chip" onclick="setFilter(this)">Não lidas</button>
+        </div>
+
+        <div class="chat-layout">
+
+            <div class="conv-list-card">
+                <div class="conv-list-header">
+                    <h3>5 conversas</h3>
+                    <span class="unread-badge">2 novas</span>
+                </div>
+
+                <div class="conv-item active" onclick="openChat(this, 'Ana Souza', 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100', 'Notebook Dell Latitude', 'Olá! A tela está impecável. Posso enviar mais fotos?')">
+                    <div class="conv-avatar">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100" alt="Ana">
+                        <div class="online-dot"></div>
+                    </div>
+                    <div class="conv-body">
+                        <div class="conv-name-row">
+                            <span class="conv-name">Ana Souza</span>
+                            <span class="conv-time">16:00</span>
+                        </div>
+                        <p class="conv-preview">A tela está impecável. Posso enviar mais fotos?</p>
+                    </div>
+                    <span class="conv-unread-count">2</span>
+                </div>
+
+                <div class="conv-item" onclick="openChat(this, 'João Pedro', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100', 'iPhone 8 Tela Quebrada', 'Notebook antigo pode ir no ecoponto?')">
+                    <div class="conv-avatar">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100" alt="João">
+                    </div>
+                    <div class="conv-body">
+                        <div class="conv-name-row">
+                            <span class="conv-name">João Pedro</span>
+                            <span class="conv-time">15:30</span>
+                        </div>
+                        <p class="conv-preview">Notebook antigo pode ir no ecoponto?</p>
+                    </div>
+                    <span class="conv-unread-count">1</span>
+                </div>
+
+                <div class="conv-item" onclick="openChat(this, 'Camila Alves', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=100', 'Lote de Cabos (5kg)', 'Como descartar carregadores quebrados?')">
+                    <div class="conv-avatar">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=100" alt="Camila">
+                    </div>
+                    <div class="conv-body">
+                        <div class="conv-name-row">
+                            <span class="conv-name">Camila Alves</span>
+                            <span class="conv-time">14:50</span>
+                        </div>
+                        <p class="conv-preview">Como descartar carregadores quebrados?</p>
+                    </div>
+                </div>
+
+                <div class="conv-item" onclick="openChat(this, 'Lucas Ferreira', 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=100', 'Monitor LCD Samsung', 'Vocês recolhem televisões antigas?')">
+                    <div class="conv-avatar">
+                        <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=100" alt="Lucas">
+                    </div>
+                    <div class="conv-body">
+                        <div class="conv-name-row">
+                            <span class="conv-name">Lucas Ferreira</span>
+                            <span class="conv-time">13:40</span>
+                        </div>
+                        <p class="conv-preview">Vocês recolhem televisões antigas?</p>
+                    </div>
+                </div>
+
+                <div class="conv-item" onclick="openChat(this, 'Mariana Lima', 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?q=80&w=100', 'Bateria de Lítio 18650', 'Tem coleta para celulares quebrados?')">
+                    <div class="conv-avatar">
+                        <img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?q=80&w=100" alt="Mariana">
+                    </div>
+                    <div class="conv-body">
+                        <div class="conv-name-row">
+                            <span class="conv-name">Mariana Lima</span>
+                            <span class="conv-time">12:15</span>
+                        </div>
+                        <p class="conv-preview">Tem coleta para celulares quebrados?</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="chat-panel" id="chatPanel">
+
+                <div class="chat-panel-header" id="chatHeader">
+                    <div class="chat-panel-avatar">
+                        <img id="chatAvatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100" alt="">
+                    </div>
+                    <div class="chat-panel-info">
+                        <h4 id="chatName">Ana Souza</h4>
+                        <span class="chat-online">Online agora</span>
+                    </div>
+                    <div class="chat-product-ref" id="chatProductRef">
+                        <i class="fas fa-tag"></i>
+                        <span id="chatProduct">Notebook Dell Latitude</span>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <div class="date-divider">Hoje</div>
+
+                    <div class="msg-row">
+                        <div class="msg-avatar-mini">
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100" alt="">
+                        </div>
+                        <div>
+                            <div class="msg-bubble other">A tela está em perfeito estado, sem riscos ou dead pixels. Posso enviar mais fotos se quiser!</div>
+                            <p class="msg-time">15:48</p>
+                        </div>
+                    </div>
+
+                    <div class="msg-row own">
+                        <div>
+                            <div class="msg-bubble own">Oi! A tela está com algum risco ou mancha?</div>
+                            <p class="msg-time">15:45</p>
+                        </div>
+                        <div class="msg-avatar-mini" style="background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#15803d;font-size:0.8rem;">Eu</div>
+                    </div>
+
+                    <div class="msg-row">
+                        <div class="msg-avatar-mini">
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100" alt="">
+                        </div>
+                        <div>
+                            <div class="msg-bubble other">Olá! Vi que você perguntou sobre o notebook. Posso ajudar com mais informações 😊</div>
+                            <p class="msg-time">15:42</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="chat-input-bar">
+                    <textarea class="chat-input-field" rows="1" placeholder="Escreva sua mensagem..." id="msgInput" onkeydown="handleKey(event)"></textarea>
+                    <button class="btn-send" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <div class="logo">
+                    <i class="fas fa-recycle"></i>
+                    <span>TechMarket</span>
+                </div>
+                <p>Tecnologia sustentável para o futuro. O maior marketplace de lixo eletrônico do Brasil.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Links Úteis</h4>
+                <ul>
+                    <li><a href="index.html">Página Inicial</a></li>
+                    <li><a href="#">Como Vender</a></li>
+                    <li><a href="#">Como Comprar</a></li>
+                    <li><a href="#">Blog EcoTech</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Categorias</h4>
+                <ul>
+                    <li><a href="#">Peças</a></li>
+                    <li><a href="#">Computadores</a></li>
+                    <li><a href="#">Celulares</a></li>
+                    <li><a href="#">Sucata</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Contato</h4>
+                <ul>
+                    <li><i class="fas fa-envelope"></i> contato@techmarket.com</li>
+                    <li><i class="fas fa-phone"></i> (11) 9999-9999</li>
+                    <li><i class="fas fa-map-marker-alt"></i> São Paulo, Brasil</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom container">
+            <p>&copy; 2026 TechMarket. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <div class="bottom">
+        <div class="bottom-item"><i class="fa-solid fa-house"></i><a href="index.html">Início</a></div>
+        <div class="bottom-item"><i class="fa-solid fa-cart-shopping"></i><a href="carrinho.html">Carrinho</a></div>
+        <div class="bottom-item"><i class="fa-solid fa-table-cells-large"></i><a href="conversas.html">Conversas</a></div>
+        <div class="bottom-item"><i class="fa-solid fa-bars"></i><a href="mais.html">Mais</a></div>
+    </div>
+
+</body>
+</html>

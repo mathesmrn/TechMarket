@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anunciar Produto | TechMarket</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .page-wrapper {
+            background: var(--light-gray);
+            min-height: calc(100vh - 80px);
+            padding: 30px 20px 100px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            color: var(--black);
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: var(--medium-gray);
+            font-size: 0.95rem;
+        }
+
+        .progress-bar-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 35px;
+        }
+
+        .step-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+        }
+
+        .step-indicator:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: calc(50% + 18px);
+            width: calc(100% - 4px);
+            height: 2px;
+            background: #e5e7eb;
+            z-index: 0;
+        }
+
+        .step-indicator.done:not(:last-child)::after {
+            background: var(--primary-green);
+        }
+
+        .step-num {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            color: var(--medium-gray);
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            transition: var(--transition);
+        }
+
+        .step-indicator.active .step-num {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .step-indicator.done .step-num {
+            background: var(--dark-green);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.72rem;
+            color: var(--medium-gray);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .step-indicator.active .step-label {
+            color: var(--primary-green);
+            font-weight: 700;
+        }
+
+        .steps-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .step-section {
+            background: var(--white);
+            border-radius: 14px;
+            padding: 30px 35px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .step-section.active { display: block; }
+
+        .step-section h2 {
+            font-size: 1.2rem;
+            color: var(--black);
+            margin-bottom: 22px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-section h2 i {
+            color: var(--primary-green);
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin-bottom: 7px;
+        }
+
+        .form-group label .required {
+            color: #ef4444;
+            margin-left: 3px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            outline: none;
+            transition: var(--transition);
+            background-color: var(--light-gray);
+            font-family: 'Inter', sans-serif;
+            color: var(--dark-gray);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary-green);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .photo-upload-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 5px;
+        }
+
+        .photo-slot {
+            aspect-ratio: 1;
+            border: 2px dashed #d1d5db;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--light-gray);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-slot:hover {
+            border-color: var(--primary-green);
+            background: var(--light-green);
+        }
+
+        .photo-slot i {
+            font-size: 1.4rem;
+            color: var(--medium-gray);
+            transition: var(--transition);
+        }
+
+        .photo-slot:hover i { color: var(--primary-green); }
+
+        .photo-slot span {
+            font-size: 0.72rem;
+            color: var(--medium-gray);
+            text-align: center;
+        }
+
+        .photo-slot.main-slot {
+            grid-column: span 2;
+            aspect-ratio: auto;
+            height: 140px;
+        }
+
+        .photo-slot input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .condition-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .condition-option {
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 14px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .condition-option:hover,
+        .condition-option.selected {
+            border-color: var(--primary-green);
+            background: var(--light-green);
+        }
+
+        .condition-option i {
+            display: block;
+            font-size: 1.3rem;
+            color: var(--medium-gray);
+            margin-bottom: 6px;
+            transition: var(--transition);
+        }
+
+        .condition-option:hover i,
+        .condition-option.selected i {
+            color: var(--primary-green);
+        }
+
+        .condition-option span {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+            display: block;
+        }
+
+        .condition-option small {
+            font-size: 0.7rem;
+            color: var(--medium-gray);
+        }
+
+        .price-input-wrapper {
+            position: relative;
+        }
+
+        .price-input-wrapper .currency {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 700;
+            color: var(--dark-gray);
+            font-size: 0.95rem;
+        }
+
+        .price-input-wrapper input {
+            padding-left: 42px;
+        }
+
+        .price-hint {
+            font-size: 0.78rem;
+            color: var(--medium-gray);
+            margin-top: 5px;
+        }
+
+        
+        .eco-impact-card {
+            background: var(--light-green);
+            border: 1.5px solid var(--primary-green);
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-top: 20px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .eco-impact-card i {
+            font-size: 1.6rem;
+            color: var(--dark-green);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .eco-impact-card p {
+            font-size: 0.85rem;
+            color: var(--dark-green);
+            margin: 0;
+        }
+
+        .eco-impact-card strong {
+            font-size: 1rem;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+       
+        .form-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .btn-prev {
+            background: white;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--dark-gray);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-prev:hover {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+        }
+
+        .btn-next {
+            background: var(--primary-green);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            color: white;
+            transition: var(--transition);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 14px 0 rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-next:hover {
+            background: var(--dark-green);
+            transform: translateY(-1px);
+        }
+
+        .preview-card {
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .preview-image-placeholder {
+            height: 180px;
+            background: linear-gradient(135deg, var(--light-green), #d1fae5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+            color: var(--dark-green);
+        }
+
+        .preview-image-placeholder i { font-size: 3rem; }
+
+        .preview-body {
+            padding: 20px;
+        }
+
+        .preview-badge {
+            background: var(--primary-green);
+            color: white;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .preview-body h3 {
+            font-size: 1rem;
+            color: var(--black);
+            margin-bottom: 6px;
+        }
+
+        .preview-body .preview-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--black);
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 0.88rem;
+            border-bottom: 1px solid var(--light-gray);
+            color: var(--dark-gray);
+        }
+
+        .checklist li:last-child { border: none; }
+
+        .checklist li i {
+            color: var(--primary-green);
+            font-size: 0.9rem;
+        }
+
+        .success-screen {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--light-green);
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            color: var(--primary-green);
+            animation: popIn 0.5s ease;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            70% { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .success-screen h2 {
+            font-size: 1.5rem;
+            color: var(--black);
+            margin-bottom: 10px;
+            border: none;
+            padding: 0;
+        }
+
+        .success-screen p {
+            color: var(--medium-gray);
+            margin-bottom: 25px;
+        }
+
+        .success-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-success-primary {
+            background: var(--primary-green);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+
+        .btn-success-primary:hover { background: var(--dark-green); }
+
+        .btn-success-secondary {
+            background: white;
+            color: var(--dark-green);
+            border: 2px solid var(--primary-green);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-success-secondary:hover { background: var(--light-green); }
+
+        @media (max-width: 600px) {
+            .step-section { padding: 22px 18px; }
+            .form-row, .form-row-3 { grid-template-columns: 1fr; }
+            .photo-upload-grid { grid-template-columns: repeat(2, 1fr); }
+            .condition-grid { grid-template-columns: 1fr 1fr; }
+            .photo-slot.main-slot { grid-column: span 2; }
+            .progress-bar-wrapper { gap: 0; }
+            .step-label { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="index.html" style="display:flex;align-items:center;gap:10px;">
+                    <i class="fas fa-recycle"></i>
+                    <span>TechMarket</span>
+                </a>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html">Início</a>
+                <a href="entrar.html">Entrar</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-wrapper">
+        <div class="container">
+            <div class="page-header">
+                <h1><i class="fas fa-tag" style="color:var(--primary-green); margin-right:10px;"></i>Anunciar Produto</h1>
+                <p>Dê uma segunda vida ao seu eletrônico. Simples, rápido e sustentável.</p>
+            </div>
+
+            <div class="progress-bar-wrapper" style="gap:40px;">
+                <div class="step-indicator active" id="ind-1">
+                    <div class="step-num">1</div>
+                    <span class="step-label">Categoria</span>
+                </div>
+                <div class="step-indicator" id="ind-2">
+                    <div class="step-num">2</div>
+                    <span class="step-label">Detalhes</span>
+                </div>
+                <div class="step-indicator" id="ind-3">
+                    <div class="step-num">3</div>
+                    <span class="step-label">Fotos</span>
+                </div>
+                <div class="step-indicator" id="ind-4">
+                    <div class="step-num">4</div>
+                    <span class="step-label">Preço</span>
+                </div>
+                <div class="step-indicator" id="ind-5">
+                    <div class="step-num">5</div>
+                    <span class="step-label">Revisão</span>
+                </div>
+            </div>
+
+            <div class="steps-container">
+
+                <div class="step-section active" id="step-1">
+                    <h2><i class="fas fa-th-large"></i> Categoria do produto</h2>
+
+                    <div class="form-group">
+                        <label>Categoria <span class="required">*</span></label>
+                        <select>
+                            <option value="">Selecione uma categoria...</option>
+                            <option>📱 Celulares e Smartphones</option>
+                            <option>💻 Notebooks e Computadores</option>
+                            <option>🖥️ Monitores e TVs</option>
+                            <option>🔌 Componentes e Peças</option>
+                            <option>🎮 Videogames e Consoles</option>
+                            <option>🔋 Baterias e Carregadores</option>
+                            <option>📡 Cabos e Conectores</option>
+                            <option>🖨️ Impressoras e Periféricos</option>
+                            <option>⚙️ Sucata para Reciclagem</option>
+                            <option>🔧 Ferramentas Eletrônicas</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Subcategoria</label>
+                        <select>
+                            <option value="">Selecione uma subcategoria...</option>
+                            <option>iPhone</option>
+                            <option>Android</option>
+                            <option>Tela / Display</option>
+                            <option>Placa-mãe</option>
+                            <option>Bateria</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Título do anúncio <span class="required">*</span></label>
+                        <input type="text" placeholder="Ex: iPhone 8 com tela trincada – funciona normalmente" maxlength="100" id="titulo-produto">
+                        <p class="price-hint">Seja descritivo. Bons títulos vendem mais rápido.</p>
+                    </div>
+
+                    <div class="form-nav">
+                        <span></span>
+                        <button class="btn-next" onclick="goStep(2)">
+                            Próximo <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step-section" id="step-2">
+                    <h2><i class="fas fa-list-alt"></i> Detalhes do produto</h2>
+
+                    <div class="form-group">
+                        <label>Condição <span class="required">*</span></label>
+                        <div class="condition-grid">
+                            <div class="condition-option selected" onclick="selectCondition(this)">
+                                <i class="fas fa-star"></i>
+                                <span>Novo</span>
+                                <small>Nunca usado</small>
+                            </div>
+                            <div class="condition-option" onclick="selectCondition(this)">
+                                <i class="fas fa-recycle"></i>
+                                <span>Usado</span>
+                                <small>Funcional</small>
+                            </div>
+                            <div class="condition-option" onclick="selectCondition(this)">
+                                <i class="fas fa-tools"></i>
+                                <span>Para Peças</span>
+                                <small>Necessita reparo</small>
+                            </div>
+                            <div class="condition-option" onclick="selectCondition(this)">
+                                <i class="fas fa-trash-alt"></i>
+                                <span>Sucata</span>
+                                <small>Reciclagem</small>
+                            </div>
+                            <div class="condition-option" onclick="selectCondition(this)">
+                                <i class="fas fa-wrench"></i>
+                                <span>Recondicionado</span>
+                                <small>Revisado</small>
+                            </div>
+                            <div class="condition-option" onclick="selectCondition(this)">
+                                <i class="fas fa-box"></i>
+                                <span>NOS</span>
+                                <small>Estoque antigo</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descrição detalhada <span class="required">*</span></label>
+                        <textarea placeholder="Descreva o produto: marca, modelo, o que funciona, o que não funciona, histórico, e qualquer detalhe relevante para o comprador..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Marca</label>
+                            <input type="text" placeholder="Ex: Dell, Samsung, Apple...">
+                        </div>
+                        <div class="form-group">
+                            <label>Modelo</label>
+                            <input type="text" placeholder="Ex: Galaxy S10, Latitude E6410...">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Problemas conhecidos / Defeitos</label>
+                        <input type="text" placeholder="Ex: Tela trincada, bateria viciada, não liga...">
+                    </div>
+
+                    <div class="form-nav">
+                        <button class="btn-prev" onclick="goStep(1)"><i class="fas fa-arrow-left"></i> Voltar</button>
+                        <button class="btn-next" onclick="goStep(3)">Próximo <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <div class="step-section" id="step-3">
+                    <h2><i class="fas fa-camera"></i> Fotos do produto</h2>
+
+                    <p style="font-size:0.88rem; color:var(--medium-gray); margin-bottom:16px;">
+                        Adicione até 8 fotos. A primeira será a foto principal. Anúncios com fotos reais vendem <strong>3x mais</strong>.
+                    </p>
+
+                    <div class="photo-upload-grid">
+                        <div class="photo-slot main-slot">
+                            <input type="file" accept="image/*">
+                            <i class="fas fa-camera"></i>
+                            <span>Foto principal</span>
+                        </div>
+                        <div class="photo-slot"><input type="file" accept="image/*"><i class="fas fa-plus"></i><span>Foto 2</span></div>
+                        <div class="photo-slot"><input type="file" accept="image/*"><i class="fas fa-plus"></i><span>Foto 3</span></div>
+                        <div class="photo-slot"><input type="file" accept="image/*"><i class="fas fa-plus"></i><span>Foto 4</span></div>
+                        <div class="photo-slot"><input type="file" accept="image/*"><i class="fas fa-plus"></i><span>Foto 5</span></div>
+                        <div class="photo-slot"><input type="file" accept="image/*"><i class="fas fa-plus"></i><span>Foto 6</span></div>
+                    </div>
+
+                    <div class="eco-impact-card" style="margin-top:22px;">
+                        <i class="fas fa-lightbulb"></i>
+                        <p>
+                            <strong>Dica: mostre os defeitos!</strong>
+                            No TechMarket, transparência gera confiança. Fotografe danos, arranhões e defeitos. Compradores especializados preferem anúncios honestos.
+                        </p>
+                    </div>
+
+                    <div class="form-nav">
+                        <button class="btn-prev" onclick="goStep(2)"><i class="fas fa-arrow-left"></i> Voltar</button>
+                        <button class="btn-next" onclick="goStep(4)">Próximo <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <div class="step-section" id="step-4">
+                    <h2><i class="fas fa-dollar-sign"></i> Preço e envio</h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Preço <span class="required">*</span></label>
+                            <div class="price-input-wrapper">
+                                <span class="currency">R$</span>
+                                <input type="number" id="preco-input" placeholder="0,00" min="0" step="0.01" oninput="updatePreview()">
+                            </div>
+                            <p class="price-hint">Dica: pesquise preços semelhantes para vender mais rápido.</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Aceita negociação?</label>
+                            <select>
+                                <option>Sim, preço negociável</option>
+                                <option>Não, preço fixo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Forma de entrega <span class="required">*</span></label>
+                        <select>
+                            <option>Envio pelos Correios (PAC/SEDEX)</option>
+                            <option>Apenas retirada presencial</option>
+                            <option>Envio + Retirada presencial</option>
+                            <option>Entrega por mototaxista local</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>CEP de origem <span class="required">*</span></label>
+                            <input type="text" placeholder="00000-000" maxlength="9">
+                        </div>
+                        <div class="form-group">
+                            <label>Peso estimado (kg)</label>
+                            <input type="number" placeholder="Ex: 0.5" min="0.1" step="0.1">
+                        </div>
+                    </div>
+
+                    <div class="eco-impact-card">
+                        <i class="fas fa-leaf"></i>
+                        <div>
+                            <p><strong>Impacto ecológico estimado</strong><br>
+                            Ao anunciar este produto, você potencialmente evita que <strong>~1,5 kg de resíduos eletrônicos</strong> sejam descartados incorretamente, economizando energia equivalente à mineração de novos componentes.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-nav">
+                        <button class="btn-prev" onclick="goStep(3)"><i class="fas fa-arrow-left"></i> Voltar</button>
+                        <button class="btn-next" onclick="goStep(5)">Revisar anúncio <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <div class="step-section" id="step-5">
+                    <h2><i class="fas fa-eye"></i> Revisar e publicar</h2>
+
+                    <p style="font-size:0.88rem; color:var(--medium-gray); margin-bottom:20px;">
+                        Confira as informações antes de publicar seu anúncio.
+                    </p>
+
+                    <div class="preview-card">
+                        <div class="preview-image-placeholder">
+                            <i class="fas fa-image"></i>
+                            <span style="font-size:0.85rem;">Suas fotos aparecerão aqui</span>
+                        </div>
+                        <div class="preview-body">
+                            <span class="preview-badge">Eco Produto</span>
+                            <h3 id="preview-titulo">Título do seu produto</h3>
+                            <div class="preview-price" id="preview-preco">R$ —</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:22px;">
+                        <h3 style="font-size:0.88rem; font-weight:700; color:var(--dark-gray); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.05em;">Checklist antes de publicar</h3>
+                        <ul class="checklist">
+                            <li><i class="fas fa-check-circle"></i> Título descritivo e preciso</li>
+                            <li><i class="fas fa-check-circle"></i> Categoria correta selecionada</li>
+                            <li><i class="fas fa-check-circle"></i> Condição do produto informada</li>
+                            <li><i class="fas fa-check-circle"></i> Fotos reais do produto adicionadas</li>
+                            <li><i class="fas fa-check-circle"></i> Preço e forma de entrega definidos</li>
+                            <li><i class="fas fa-check-circle"></i> Defeitos informados com honestidade</li>
+                        </ul>
+                    </div>
+
+                    <div class="form-nav">
+                        <button class="btn-prev" onclick="goStep(4)"><i class="fas fa-arrow-left"></i> Voltar</button>
+                        <button class="btn-next" onclick="publish()" style="background:var(--dark-green); font-size:1rem; padding:14px 30px;">
+                            <i class="fas fa-paper-plane"></i> Publicar agora
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step-section" id="step-success">
+                    <div class="success-screen">
+                        <div class="success-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h2>Anúncio publicado!</h2>
+                        <p>Seu produto já está visível para compradores de todo o Brasil.<br>Você contribuiu para um ciclo eletrônico mais sustentável 🌱</p>
+                        <div class="success-actions">
+                            <a href="index.html" class="btn-success-primary">Ver marketplace</a>
+                            <a href="anunciar.html" class="btn-success-secondary">Anunciar outro produto</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom">
+        <div class="bottom-item"><i class="fa-solid fa-house"></i><a href="index.html">Início</a></div>
+        <div class="bottom-item"><i class="fa-solid fa-cart-shopping"></i><a href="carrinho.html">Carrinho</a></div>
+        <div class="bottom-item"><i class="fa-solid fa-table-cells-large"></i><a href="conversas.html">Conversas</a></div>
+        <div class="bottom-item"><i class="fa-solid fa-bars"></i><a href="mais.html">Mais</a></div>
+    </div>
+
+</body>
+</html>
